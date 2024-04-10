@@ -1,12 +1,12 @@
 package perriAlessandro.U5w2D3.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import perriAlessandro.U5w2D3.entities.BlogPost;
 import perriAlessandro.U5w2D3.services.BlogPostService;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,8 +19,10 @@ public class BlogPostController {
 
     // GET .../blogPost
     @GetMapping
-    private List<BlogPost> getAllBlogPost() {
-        return this.blogPostService.getBlogPostList();
+    private Page<BlogPost> getAllBlogPost(@RequestParam(defaultValue = "0") int page,
+                                          @RequestParam(defaultValue = "10") int size,
+                                          @RequestParam(defaultValue = "id") String sortBy) {
+        return this.blogPostService.getBlogPostList(page, size, sortBy);
     }
 
     // POST .../blogPost (+ body)
@@ -38,14 +40,14 @@ public class BlogPostController {
 
     // PUT .../blogPost/{postId} (+ body)
     @PutMapping("/{blogId}")
-    private BlogPost findBlogByIdAndUpdate(@PathVariable UUID blogId, @RequestBody BlogPost body) {
+    public BlogPost findBlogByIdAndUpdate(@PathVariable UUID blogId, @RequestBody BlogPost body) {
         return this.blogPostService.findByIdAndUpdate(blogId, body);
     }
 
     // DELETE .../blogPost/{postId}
     @DeleteMapping("/{blogId}")
     @ResponseStatus(HttpStatus.NO_CONTENT) // Status Code 204
-    private void findByBlogIdAndDelete(@PathVariable UUID blogId) {
+    public void findByBlogIdAndDelete(@PathVariable UUID blogId) {
         this.blogPostService.findByIdAndDelete(blogId);
     }
 

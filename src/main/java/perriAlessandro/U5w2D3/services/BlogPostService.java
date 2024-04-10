@@ -1,60 +1,56 @@
 package perriAlessandro.U5w2D3.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import perriAlessandro.U5w2D3.entities.BlogPost;
+import perriAlessandro.U5w2D3.exceptions.BadRequestException;
 import perriAlessandro.U5w2D3.exceptions.NotFoundException;
+import perriAlessandro.U5w2D3.repositories.BlogPostDAO;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.UUID;
 
 @Service
 public class BlogPostService {
-    private List<BlogPost> blogPostList = new ArrayList<>();
+    @Autowired
+    private BlogPostDAO blogDAO;
 
-    public List<BlogPost> getBlogPostList() {
-        return this.blogPostList;
+    public Page<BlogPost> getBlogPostList(int page, int size, String sortBy) {
+        if (size > 100) size = 100;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return this.blogDAO.findAll(pageable);
     }
 
     public BlogPost saveBlogPost(BlogPost body) {
-        this.blogPostList.add(body);
-        return body;
+        this.blogDAO.findByAuthorNome(body.getAuthor().getNome()).ifPresent(
+                // 2. Se lo è triggero un errore
+                blog -> {
+                    throw new BadRequestException("Il blog che volevi assegnare a " + blog.getAuthor().getNome() + " ha già un autore!");
+                }
+        );
+        return blogDAO.save(body);
     }
 
     public BlogPost findById(UUID id) {
-        BlogPost trovato = null;
-        for (BlogPost aut : this.blogPostList) {
-            if (aut.getId() == id) trovato = aut;
-        }
-        if (trovato == null) throw new NotFoundException(id);
-        else return trovato;
+        return this.blogDAO.findById(id).orElseThrow(() -> new NotFoundException(id));
     }
 
-    public BlogPost findByIdAndUpdate(UUID id, BlogPost updatedAut) {
-        BlogPost trovato = null;
-        for (BlogPost aut : this.blogPostList) {
-            if (aut.getId() == id) {
-                trovato = aut;
-                trovato.setCategory(updatedAut.getCategory());
-                trovato.setTitolo(updatedAut.getTitolo());
-                trovato.setCover(updatedAut.getCover());
-                trovato.setContenuto(updatedAut.getContenuto());
-                trovato.setMinutiLettura(updatedAut.getMinutiLettura());
-            }
-        }
-        if (trovato == null) throw new NotFoundException(id);
-        else return trovato;
+    public BlogPost findByIdAndUpdate(UUID id, BlogPost updatedBlog) {
+        BlogPost found = this.findById(id);
+        found.setContenuto(updatedBlog.getContenuto());
+        found.setCategory(updatedBlog.getCategory());
+        found.setTitolo(updatedBlog.getTitolo());
+        found.setCover(updatedBlog.getCover());
+        found.setMinutiLettura(updatedBlog.getMinutiLettura());
+        found.setAuthor(updatedBlog.getAuthor());
+        return this.blogDAO.save(found);
     }
 
     public void findByIdAndDelete(UUID id) {
-        Iterator<BlogPost> iter = this.blogPostList.iterator();
-
-        while (iter.hasNext()) {
-            BlogPost current = iter.next();
-            if (current.getId() == id) {
-                iter.remove();
-            }
-        }
+        BlogPost found = this.findById(id);
+        this.blogDAO.delete(found);
     }
 }
