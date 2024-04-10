@@ -1,9 +1,6 @@
 package perriAlessandro.U5w2D3.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,5 +23,7 @@ public class BlogPost {
     private String cover;
     private String contenuto;
     private double minutiLettura;
+    @ManyToOne
+    private Author author;
 
 }

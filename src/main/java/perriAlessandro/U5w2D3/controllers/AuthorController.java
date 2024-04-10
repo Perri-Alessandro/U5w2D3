@@ -1,12 +1,12 @@
 package perriAlessandro.U5w2D3.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import perriAlessandro.U5w2D3.entities.Author;
 import perriAlessandro.U5w2D3.services.AuthorService;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -18,14 +18,16 @@ public class AuthorController {
 
     // GET .../authors
     @GetMapping
-    private List<Author> getAllBlogPost() {
-        return this.authorService.getAuthorList();
+    public Page<Author> getAllBlogPost(@RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "10") int size,
+                                       @RequestParam(defaultValue = "id") String sortBy) {
+        return this.authorService.getAuthorList(page, size, sortBy);
     }
 
     // POST .../authors (+ body)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED) // Status Code 201
-    private Author saveAuthor(@RequestBody Author body) {
+    public Author saveAuthor(@RequestBody Author body) {
         return this.authorService.saveAuthor(body);
     }
 

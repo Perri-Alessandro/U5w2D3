@@ -1,12 +1,13 @@
 package perriAlessandro.U5w2D3.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -15,7 +16,6 @@ import java.util.UUID;
 @Setter
 @ToString
 @NoArgsConstructor
-@AllArgsConstructor
 public class Author {
     @Id
     @GeneratedValue
@@ -25,6 +25,8 @@ public class Author {
     private String mail;
     private LocalDate dataNascita;
     private String imageUrl;
+    @OneToMany(mappedBy = "author")
+    private List<BlogPost> blogPosts;
 
     public void setImageUrl(String imageUrl) {
         if (nome != null && cognome != null) {
