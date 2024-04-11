@@ -24,6 +24,7 @@ public class BlogPost {
     private String contenuto;
     private double minutiLettura;
     @ManyToOne
+    @JoinColumn(name = "authorId")
     private Author author;
 
 }

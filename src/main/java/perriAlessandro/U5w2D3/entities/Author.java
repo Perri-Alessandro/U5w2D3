@@ -1,5 +1,6 @@
 package perriAlessandro.U5w2D3.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class Author {
     private String mail;
     private LocalDate dataNascita;
     private String imageUrl;
+    @JsonIgnore
     @OneToMany(mappedBy = "author")
     private List<BlogPost> blogPosts;
 

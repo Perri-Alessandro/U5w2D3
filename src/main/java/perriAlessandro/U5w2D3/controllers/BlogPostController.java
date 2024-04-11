@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import perriAlessandro.U5w2D3.entities.BlogPost;
+import perriAlessandro.U5w2D3.payloads.BlogPostPayload;
 import perriAlessandro.U5w2D3.services.BlogPostService;
 
 import java.util.UUID;
@@ -28,7 +29,7 @@ public class BlogPostController {
     // POST .../blogPost (+ body)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED) // Status Code 201
-    private BlogPost saveBlogPost(@RequestBody BlogPost body) {
+    private BlogPost saveBlogPost(@RequestBody BlogPostPayload body) {
         return this.blogPostService.saveBlogPost(body);
     }
 
@@ -40,14 +41,14 @@ public class BlogPostController {
 
     // PUT .../blogPost/{postId} (+ body)
     @PutMapping("/{blogId}")
-    public BlogPost findBlogByIdAndUpdate(@PathVariable UUID blogId, @RequestBody BlogPost body) {
+    private BlogPost findBlogByIdAndUpdate(@PathVariable UUID blogId, @RequestBody BlogPostPayload body) {
         return this.blogPostService.findByIdAndUpdate(blogId, body);
     }
 
     // DELETE .../blogPost/{postId}
     @DeleteMapping("/{blogId}")
     @ResponseStatus(HttpStatus.NO_CONTENT) // Status Code 204
-    public void findByBlogIdAndDelete(@PathVariable UUID blogId) {
+    private void findByBlogIdAndDelete(@PathVariable UUID blogId) {
         this.blogPostService.findByIdAndDelete(blogId);
     }
 
